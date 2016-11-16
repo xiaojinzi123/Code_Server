@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd-->
+
+    <!-- 包含jdbc配置信息 -->
+    <context:property-placeholder location="classpath:config/jdbc.properties"/>
+
+    <!-- 配置连接池 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value="${user}"/>
+        <property name="password" value="${password}"/>
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="driverClass" value="${driverClass}"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:config/mapper/*.xml"/>
+        <!--<property name="configLocation" value="classpath:config/mybatis-config.xml"></property>-->
+        <property name="typeAliases"
+                  value="com.xiaojinzi.code.modular.user.pojo.User,
+                    com.xiaojinzi.code.modular.programingLanguage.pojo.ProLan,
+                    com.xiaojinzi.code.modular.dynamics.pojo.BugDynamics,
+                    com.xiaojinzi.code.modular.dynamics.pojo.BlogDynamics,
+                    com.xiaojinzi.code.modular.adv.pojo.Adv,
+                    com.xiaojinzi.code.modular.popularStar.pojo.PopularStar,
+                    com.xiaojinzi.code.modular.comment.pojo.BugComment,
+                    com.xiaojinzi.code.modular.comment.pojo.BlogComment,
+                    com.xiaojinzi.code.modular.programingLanguage.pojo.ProLan"/>
+    </bean>
+
+    <!-- 配置一个事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven proxy-target-class="true"
+                          transaction-manager="transactionManager"/>
+
+    <!--配置User代理对象-->
+    <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.user.dao.UserMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--配置动态Dynamics-->
+    <bean id="bugDynamicsMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.dynamics.dao.BugDynamicsMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <bean id="blogDynamicsMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.dynamics.dao.BlogDynamicsMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--广告-->
+    <bean id="advMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.adv.dao.AdvMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--人气明星-->
+    <bean id="popularStarMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.popularStar.dao.PopularStarMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--Bug动态的评论-->
+    <bean id="bugCommentMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.comment.dao.BugCommentMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--编程语言-->
+    <bean id="proLanMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.xiaojinzi.code.modular.programingLanguage.dao.ProLanMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+
+
+</beans>

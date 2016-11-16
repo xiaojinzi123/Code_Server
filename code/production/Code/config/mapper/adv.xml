@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojinzi.code.modular.adv.dao.AdvMapper">
+
+    <resultMap id="advBean" type="adv">
+        <id column="id" property="id"/>
+        <result column="image" property="image"/>
+        <result column="href" property="href"/>
+        <result column="description" property="description"/>
+    </resultMap>
+
+    <!--查询所有广告-->
+    <select id="queryAll"
+            resultType="adv">
+		select * from adv
+	</select>
+
+</mapper>

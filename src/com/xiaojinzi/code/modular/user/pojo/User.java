@@ -45,7 +45,7 @@ public class User extends BaseEntity {
      * 4-5 1000经验值
      * 5-6 2000经验值
      * 6-7 5000经验值
-     * 7-8 10000经验值
+     * 7-8 10000经验值xxx
      */
     private int xp;
 

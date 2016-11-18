@@ -29,6 +29,16 @@ public interface UserService extends BaseService<User, Integer> {
     boolean login(User user, Result<User> result);
 
     /**
+     * 完善用户信息
+     *
+     * @param realUser 真实用户对象
+     * @param user     用户对象,此用户的部分信息会更新倒真实的对象realUser对象中
+     * @param result   结果
+     * @return
+     */
+    boolean improveUserInfo(User realUser, User user, Result<User> result);
+
+    /**
      * 电话号码是否存在
      *
      * @param phoneNumber

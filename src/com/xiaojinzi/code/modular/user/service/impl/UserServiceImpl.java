@@ -77,7 +77,6 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     }
 
 
-
     /**
      * 登陆的逻辑
      *
@@ -134,6 +133,46 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             return b;
 
         }
+
+    }
+
+    @Override
+    public boolean improveUserInfo(User realUser, User user, Result<User> result) {
+
+        //获取倒用户名
+        String name = user.getName();
+
+        if (StringUtil.isEmpty(name)) {
+            result.resultText = "用户名不能为空";
+            return false;
+        }
+
+        //获取倒头像地址
+        String avatarAddress = user.getAvatarAddress();
+
+        if (StringUtil.isEmpty(avatarAddress)) {
+            result.resultText = "头像不能为空";
+            return false;
+        }
+
+        //获取描述
+        String description = user.getDescription();
+
+        //名称是否重复
+        User u = isNameExist(name);
+
+        if (u == null) {
+            result.resultText = "用户名已经存在";
+            return false;
+        }
+
+        //设置更新的信息
+        realUser.setName(name);
+        realUser.setAvatarAddress(avatarAddress);
+        realUser.setDescription(description);
+
+        //执行更新
+        return update(realUser, result);
 
     }
 

@@ -75,7 +75,7 @@ public class AppCommentController {
                                HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //拿到登陆的用户信息
-        User user = (User) request.getAttribute(DefultConstant.USER_FLAG);
+        User user = (User) request.getAttribute(DefultConstant.DEFULT_AVATARADDRESS);
 
         BugComment bugComment = new BugComment();
         bugComment.setUser(user);

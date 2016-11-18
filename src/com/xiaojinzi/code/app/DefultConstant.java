@@ -18,6 +18,13 @@ public class DefultConstant {
     /**
      * 每次请求登陆的用户的标识
      */
-    public static final String USER_FLAG = "user";
+    public static final String CLIENT_USER_FLAG = "clientUser";
+
+
+    public static final String USERCLIENTTOKEN_FLAG = "clientToken";
+
+    public static final String CLIENTUSERID_FLAG = "userId";
+
+
 
 }

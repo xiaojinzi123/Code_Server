@@ -1,5 +1,11 @@
 package com.xiaojinzi.code.app.interceptor;
 
+import com.xiaojinzi.code.app.DefultConstant;
+import com.xiaojinzi.code.app.util.ResponseUtil;
+import com.xiaojinzi.code.modular.user.pojo.User;
+import com.xiaojinzi.code.modular.user.service.UserService;
+import com.xiaojinzi.code.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,6 +21,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AppTokenInterceptor implements HandlerInterceptor {
 
+    /**
+     * 白名单
+     */
+    private static final String[] uris = new String[]{
+            "/code/app/user/login",
+            "/code/app/user/register"
+    };
+
+    @Autowired
+    UserService userService;
+
 
     /**
      * 再请求被处理之前进行对请求的预处理,过滤掉一些恶意请求
@@ -27,8 +44,45 @@ public class AppTokenInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object controller) throws Exception {
-        //目前先不拦截任何一个请求,都放过去
-        return true;
+
+        //获取到访问的路径
+        String requestURI = httpServletRequest.getRequestURI();
+
+        for (int i = 0; i < uris.length; i++) {
+            //白名单的路径
+            String uri = uris[i];
+            if (uri.equals(requestURI))
+                return true;
+        }
+
+        //拿到token和userId
+        String clientToken = httpServletRequest.getParameter(DefultConstant.USERCLIENTTOKEN_FLAG);
+        String strUserId = httpServletRequest.getParameter(DefultConstant.CLIENTUSERID_FLAG);
+
+        //如果token或者userId没有,就不响应
+        if (!StringUtil.isEmpty(clientToken) && !StringUtil.isEmpty(strUserId)) {
+            Integer userId = null;
+            try {
+                userId = Integer.parseInt(strUserId);
+            } catch (Exception e) {
+            }
+            if (userId != null && userId > 0) {
+                //拿到对象
+                User user = userService.queryById(userId);
+                if (user != null) {
+                    if (clientToken.equals(user.getClientToken())) {
+                        httpServletRequest.setAttribute(DefultConstant.CLIENT_USER_FLAG, user);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //返回错误信息
+        ResponseUtil.setMsgInfo(false, "token无效", null, null, httpServletResponse);
+
+        return false;
+
     }
 
     @Override

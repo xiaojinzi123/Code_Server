@@ -7,6 +7,7 @@
 
     <!--查询动态的时候一并的连同发布动态的用户和动态的游戏标签都查询出来-->
     <resultMap type="bugDynamics" id="bugDynamicsBean">
+
         <id column="id" property="id"/>
         <result column="dynamicsType" property="dynamicsType"/>
         <result column="title" property="title"/>
@@ -16,7 +17,7 @@
 
         <!--对一的情况-->
         <association property="user" javaType="user">
-            <result column="u_id" property="id"/>
+            <id column="u_id" property="id"/>
             <result column="name" property="name"/>
             <result column="userAvatarAddress" property="avatarAddress"/>
             <result column="sex" property="sex"/>
@@ -24,24 +25,47 @@
 
         <!--对一的情况-->
         <association property="proLan" javaType="proLan">
-            <result column="pl_id" property="id"/>
+            <id column="pl_id" property="id"/>
             <result column="proLanName" property="name"/>
+        </association>
+
+        <!--Bug的评论,正确的答案-->
+        <association property="bugComment" javaType="BugComment">
+            <id column="answer_id" property="id"/>
+            <result column="bc_content" property="content"/>
+            <result column="bc_commentTime" property="commentTime"/>
+            <!--评论的用户-->
+            <association property="user" javaType="user">
+                <id column="bc_u_id" property="id"/>
+                <result column="u1_name" property="name"/>
+                <result column="u1_avatarAddress" property="avatarAddress"/>
+                <result column="u1_sex" property="sex"/>
+            </association>
         </association>
 
     </resultMap>
 
+    <!--查询bug动态的详情-->
     <select id="queryById" resultMap="bugDynamicsBean" parameterType="java.lang.Integer">
 
-        select d.id, d.dynamicsType,d.title,d.content,d.images,d.postTime,d.u_id,d.pl_id,
+        select
+        d.id, d.dynamicsType,d.title,d.content,d.images,d.postTime,d.u_id,d.pl_id,d.answer_id,
         u.name,u.avatarAddress userAvatarAddress,u.sex,
-        pl.id plId,pl.name proLanName
+        pl.id plId,pl.name proLanName,
+		bc.content bc_content,bc.commentTime bc_commentTime,bc.u_id bc_u_id,
+		u1.name u1_name,u1.avatarAddress u1_avatarAddress,u1.sex u1_sex
         from
         (bugDynamics d,
-        user u,proLan pl)
+        user u,
+        proLan pl,
+        bugComment bc,
+		user u1)
         where
         d.id = #{id}
         and u.id = d.u_id
         and d.pl_id = pl.id
+        and d.answer_id = bc.id
+		and u1.id = bc.u_id
 
     </select>
 

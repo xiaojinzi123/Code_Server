@@ -48,7 +48,7 @@
     <!--查询bug动态的详情-->
     <select id="queryById" resultMap="bugDynamicsBean" parameterType="java.lang.Integer">
 
-        select
+		select
         d.id, d.dynamicsType,d.title,d.content,d.images,d.postTime,d.u_id,d.pl_id,d.answer_id,
         u.name,u.avatarAddress userAvatarAddress,u.sex,
         pl.id plId,pl.name proLanName,
@@ -57,15 +57,13 @@
         from
         (bugDynamics d,
         user u,
-        proLan pl,
-        bugComment bc,
-		user u1)
+        proLan pl)
+		left join bugComment bc on d.answer_id = bc.id
+		left join user u1 on u1.id = bc.u_id
         where
         d.id = #{id}
         and u.id = d.u_id
         and d.pl_id = pl.id
-        and d.answer_id = bc.id
-		and u1.id = bc.u_id
 
     </select>
 
